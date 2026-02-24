@@ -4,6 +4,7 @@ node_modules/
 # Build outputs
 dist/
 build/
+**/dist/
 
 # Environment variables - NEVER commit these
 .env
@@ -25,3 +26,7 @@ Thumbs.db
 
 # Test coverage
 coverage/
+
+# Debug and temp output files
+run-output.txt
+build-output.txt
