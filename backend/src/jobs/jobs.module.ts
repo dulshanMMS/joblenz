@@ -3,10 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Job, JobSchema } from './schemas/job.schema';
 import { JobsService } from './jobs.service';
 import { JobsController } from './jobs.controller';
+import { AiModule } from '../ai/ai.module';
 
 @Module({
     imports: [
         MongooseModule.forFeature([{ name: Job.name, schema: JobSchema }]),
+        AiModule,
     ],
     controllers: [JobsController],
     providers: [JobsService],
