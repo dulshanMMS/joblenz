@@ -21,11 +21,8 @@ export default function RegisterPage() {
       await register(name, email, password);
       navigate('/dashboard');
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : 'Registration failed. Please try again.';
-      setError(message);
+      const axiosMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(axiosMessage ?? 'Registration failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
