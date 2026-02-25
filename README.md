@@ -81,8 +81,8 @@ pnpm dev:frontend
 | Service | URL |
 |---|---|
 | Frontend | https://joblenz.vercel.app |
-| Backend API | https://joblenzbe.vercel.app/api |
-| Swagger Docs | https://joblenzbe.vercel.app/api/docs |
+| Backend API | https://joblenz-backend.vercel.app/api |
+| Swagger Docs | https://joblenz-backend.vercel.app/api/docs |
 
 ## API Documentation
 
