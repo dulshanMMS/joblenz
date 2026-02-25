@@ -20,11 +20,11 @@ export class AiService {
     ): Promise<string | null> {
         try {
             const model = this.genAI.getGenerativeModel({
-                model: 'gemini-1.5-flash',
+                model: 'gemini-2.5-flash',
             });
 
-            const prompt = `Generate a concise 2-3 sentence professional summary for the following service job. 
-Be factual and clear. Do not add any extra commentary.
+            const prompt = `Generate a concise 2-3 sentence summary for the following service job request.
+Focus on what needs to be done, where, and any key requirements. Be factual and clear.
 
 Title: ${title}
 Description: ${description}

@@ -19,6 +19,7 @@ const mockJobModel = {
     create: jest.fn(),
     find: jest.fn(),
     findById: jest.fn(),
+    findByIdAndUpdate: jest.fn(),
 };
 
 const mockAiService = {
@@ -100,15 +101,15 @@ describe('JobsService', () => {
         });
 
         it('should update and return the job if the owner matches', async () => {
-            const saveMock = jest.fn().mockResolvedValue({
-                ...mockJob,
-                status: JobStatus.COMPLETED,
-            });
+            const updatedJob = { ...mockJob, status: JobStatus.COMPLETED };
 
             mockJobModel.findById.mockResolvedValue({
                 ...mockJob,
                 owner: { toString: () => 'user-id-123' },
-                save: saveMock,
+            });
+
+            mockJobModel.findByIdAndUpdate.mockReturnValue({
+                lean: jest.fn().mockResolvedValue(updatedJob),
             });
 
             const result = await service.update(
@@ -117,7 +118,11 @@ describe('JobsService', () => {
                 'user-id-123',
             );
 
-            expect(saveMock).toHaveBeenCalled();
+            expect(mockJobModel.findByIdAndUpdate).toHaveBeenCalledWith(
+                'job-id-123',
+                { $set: { status: JobStatus.COMPLETED } },
+                { new: true, runValidators: true },
+            );
             expect(result.status).toBe(JobStatus.COMPLETED);
         });
     });
