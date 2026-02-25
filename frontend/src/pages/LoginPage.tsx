@@ -1,7 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import ErrorToast from '../components/ErrorToast';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -12,9 +11,15 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // auto-dismiss error after 3 s
+  useEffect(() => {
+    if (!error) return;
+    const t = setTimeout(() => setError(null), 3000);
+    return () => clearTimeout(t);
+  }, [error]);
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError(null);
     setIsSubmitting(true);
 
     try {
@@ -42,7 +47,12 @@ export default function LoginPage() {
         {/* Card */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
           {error && (
-            <ErrorToast message={error} onDismiss={() => setError(null)} />
+            <div key={error} className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-400 overflow-hidden">
+              <div className="px-4 py-3">{error}</div>
+              <div className="h-0.5 bg-red-500/10">
+                <div className="h-full bg-red-500/50" style={{ animation: 'jl-shrink 3s linear forwards' }} />
+              </div>
+            </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
