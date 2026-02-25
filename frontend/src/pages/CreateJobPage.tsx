@@ -39,7 +39,7 @@ export default function CreateJobPage() {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl">
       {/* Back link */}
       <Link
         to="/dashboard"

@@ -70,7 +70,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="w-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -99,21 +99,23 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Filter tabs */}
-      <div className="flex gap-1 p-1 bg-slate-900 border border-slate-800 rounded-lg w-fit mb-6">
-        {TABS.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => setActiveFilter(tab.value)}
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-              activeFilter === tab.value
-                ? 'bg-slate-800 text-white'
-                : 'text-slate-400 hover:text-slate-300'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Filter tabs — scrollable on mobile */}
+      <div className="overflow-x-auto mb-6 -mx-1 px-1">
+        <div className="flex gap-1 p-1 bg-slate-900 border border-slate-800 rounded-lg w-fit">
+          {TABS.map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => setActiveFilter(tab.value)}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                activeFilter === tab.value
+                  ? 'bg-slate-800 text-white'
+                  : 'text-slate-400 hover:text-slate-300'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Content */}
