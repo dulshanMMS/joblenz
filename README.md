@@ -87,3 +87,17 @@ pnpm dev:frontend
 ## API Documentation
 
 Swagger docs are available at `http://localhost:3000/api/docs` when running locally.
+
+## Key Design Decisions
+
+**Consistent API response shape**
+All endpoints return `{ success, statusCode, data, message }` through a global `ResponseInterceptor` and `GlobalExceptionFilter`, so the frontend always has a predictable structure to work with regardless of success or failure.
+
+**Owner-scoped access control**
+Jobs store an `owner` field referencing the user's ObjectId. Every query filters by both `_id` and `owner`, so users can only read and modify their own jobs even if they know another job's ID.
+
+**Graceful AI fallback**
+If Gemini is unavailable or over quota, job creation still succeeds with `aiSummary: null`. A 50-character minimum is also enforced on descriptions before calling Gemini to avoid wasting quota on trivial inputs.
+
+**DTO validation with whitelist**
+The global `ValidationPipe` is configured with `whitelist: true` and `forbidNonWhitelisted: true`, which strips unknown fields and rejects requests with unexpected properties before they reach the service layer.
