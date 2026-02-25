@@ -76,6 +76,14 @@ pnpm dev:frontend
 |---|---|
 | `VITE_API_BASE_URL` | Backend API base URL |
 
+## Live URLs
+
+| Service | URL |
+|---|---|
+| Frontend | https://joblenz-frontend.vercel.app |
+| Backend API | https://joblenzbe.vercel.app/api |
+| Swagger Docs | https://joblenzbe.vercel.app/api/docs |
+
 ## API Documentation
 
 Swagger docs are available at `http://localhost:3000/api/docs` when running locally.
