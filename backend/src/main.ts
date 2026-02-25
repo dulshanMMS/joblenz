@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { DocsService } from './docs/docs.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,52 +26,16 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  // Swagger API documentation
+  // Build OpenAPI spec and store it in DocsService so DocsController can serve it
+  // The UI is served at /api/docs using CDN assets (works on Vercel serverless)
   const config = new DocumentBuilder()
     .setTitle('JobLenz API')
     .setDescription('Job management API with AI-powered summaries')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
-
-  // Serve the OpenAPI JSON spec (used by the UI below)
-  const express = app.getHttpAdapter().getInstance();
-  express.get('/api/docs-json', (_req: unknown, res: { json: (d: unknown) => void }) => res.json(document));
-
-  // Serve Swagger UI using CDN assets — works in serverless environments (e.g. Vercel)
-  // where local static files from node_modules are not accessible
-  const specJson = JSON.stringify(document);
-  express.get('/api/docs', (_req: unknown, res: { setHeader: (k: string, v: string) => void; send: (b: string) => void }) => {
-    res.setHeader('Content-Type', 'text/html');
-    res.send(`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>JobLenz API</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css">
-</head>
-<body>
-<div id="swagger-ui"></div>
-<script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
-<script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
-<script>
-window.onload = function () {
-  SwaggerUIBundle({
-    spec: ${specJson},
-    dom_id: '#swagger-ui',
-    deepLinking: true,
-    presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-    plugins: [SwaggerUIBundle.plugins.DownloadUrl],
-    layout: 'StandaloneLayout',
-  });
-};
-</script>
-</body>
-</html>`);
-  });
+  app.get(DocsService).setDocument(document);
 
   app.enableCors();
 
