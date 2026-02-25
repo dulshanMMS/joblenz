@@ -8,6 +8,7 @@ import {
     Query,
     UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { JobsService } from './jobs.service';
@@ -15,6 +16,7 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { JobStatus } from './schemas/job.schema';
 
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard) // All routes in this controller require a valid JWT
 @Controller('jobs')
 export class JobsController {
