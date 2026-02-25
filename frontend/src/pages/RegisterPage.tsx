@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ErrorToast from '../components/ErrorToast';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -42,9 +43,7 @@ export default function RegisterPage() {
         {/* Card */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
           {error && (
-            <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
-              {error}
-            </div>
+            <ErrorToast message={error} onDismiss={() => setError(null)} />
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
