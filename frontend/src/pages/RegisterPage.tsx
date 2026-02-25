@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useRef, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,13 +11,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // auto-dismiss error after 3 s
-  useEffect(() => {
-    if (!error) return;
-    const t = setTimeout(() => setError(null), 3000);
-    return () => clearTimeout(t);
-  }, [error]);
+  const errorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -28,7 +22,10 @@ export default function RegisterPage() {
       navigate('/dashboard');
     } catch (err: unknown) {
       const axiosMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setError(axiosMessage ?? 'Registration failed. Please try again.');
+      const msg = axiosMessage ?? 'Registration failed. Please try again.';
+      if (errorTimer.current) clearTimeout(errorTimer.current);
+      setError(msg);
+      errorTimer.current = setTimeout(() => setError(null), 3000);
     } finally {
       setIsSubmitting(false);
     }
@@ -47,14 +44,16 @@ export default function RegisterPage() {
 
         {/* Card */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-          {error && (
-            <div key={error} className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-400 overflow-hidden">
-              <div className="px-4 py-3">{error}</div>
-              <div className="h-0.5 bg-red-500/10">
-                <div className="h-full bg-red-500/50" style={{ animation: 'jl-shrink 3s linear forwards' }} />
-              </div>
+          <div
+            className={`rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-400 overflow-hidden transition-all duration-300 ${
+              error ? 'opacity-100 max-h-20 mb-4' : 'opacity-0 max-h-0 mb-0 border-transparent'
+            }`}
+          >
+            <div className="px-4 py-3">{error}</div>
+            <div className="h-0.5 bg-red-500/10">
+              <div key={error ?? ''} className="h-full bg-red-500/50" style={{ animation: error ? 'jl-shrink 3s linear forwards' : 'none' }} />
             </div>
-          )}
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
